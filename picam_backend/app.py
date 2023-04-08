@@ -1,4 +1,5 @@
 import io
+import os
 from threading import Condition
 
 from picamera2 import Picamera2
@@ -6,8 +7,13 @@ from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput
 import libcamera
 
-from flask import Flask, Response
+from flask import Flask, Response, request
 from flask_cors import CORS, cross_origin
+
+from dotenv import load_dotenv
+
+load_dotenv()
+AUTH_PASSWORD = os.environ.get("AUTH_PASSWORD")
 
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
@@ -43,7 +49,10 @@ try:
     @app.route("/stream", methods=["GET"])
     @cross_origin()
     def get_stream():
-        return Response(stream_img(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        if request.args.get("auth") == AUTH_PASSWORD:
+            return Response(stream_img(), mimetype='multipart/x-mixed-replace; boundary=frame', status=200)
+        else:
+            return Response("Unauthorised", status=401)
 
     app.run(host='0.0.0.0', threaded=True)
 
