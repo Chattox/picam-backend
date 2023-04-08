@@ -8,6 +8,8 @@ packages = [{include = "picam_backend"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+flask = "^2.2.3"
+flask-cors = "^3.0.10"
 
 
 [build-system]
