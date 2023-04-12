@@ -47,5 +47,8 @@ if __name__ == "__main__":
         img = picam2.capture_array()
         result, objectInfo = getObjects(img, 0.6, 0.2)
         cv2.imshow("Output", img)
-        cv2.waitKey(1)
-        
+        k = cv2.waitKey(1) & 0xff
+        if k == 27:
+            break
+        elif k == ord('s'):
+            cv2.imwrite('objdetect.png', img)
