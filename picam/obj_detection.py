@@ -3,12 +3,12 @@ from picamera2 import Picamera2
 import libcamera
 
 classNames = []
-classFile = "/home/chattox/Documents/Coding/picam-backend/picam/obj_ident_data/coco.names"
+classFile = "/home/pi/Documents/Coding/picam-backend/picam/obj_ident_data/coco.names"
 with open(classFile, "rt") as f:
     classNames = f.read().rstrip("\n").split("\n")
 
-configPath = "/home/chattox/Documents/Coding/picam-backend/picam/obj_ident_data/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
-weightsPath = "/home/chattox/Documents/Coding/picam-backend/picam/obj_ident_data/frozen_inference_graph.pb"
+configPath = "/home/pi/Documents/Coding/picam-backend/picam/obj_ident_data/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
+weightsPath = "/home/pi/Documents/Coding/picam-backend/picam/obj_ident_data/frozen_inference_graph.pb"
 
 net = cv2.dnn_DetectionModel(weightsPath, configPath)
 net.setInputSize(320, 320)
