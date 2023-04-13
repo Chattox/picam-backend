@@ -22,12 +22,9 @@ class Picam:
         self.video_config["transform"] = libcamera.Transform(hflip=1, vflip=1)
         self.camera.configure(self.video_config)
         self.output = StreamingOutput()
-        self.camera.start_recording(JpegEncoder(), FileOutput(self.output))
-        print("hello wooooorld")
-        
+        self.camera.start_recording(JpegEncoder(), FileOutput(self.output))      
 
     def livestream(self):
-        print("hello world")
         while True:
             with self.output.condition:
                 self.output.condition.wait()
