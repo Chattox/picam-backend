@@ -35,6 +35,7 @@ class Picam:
                 frame = self.output.frame
             yield (b"--frame\r\n"
                    b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
+            time.sleep(0.016)
 
     def obj_detect(self):
         while not self.thread_abort:
