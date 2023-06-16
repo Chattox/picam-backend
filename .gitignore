@@ -2,5 +2,3 @@ __pycache__/
 dist
 *.py[cod]
 .env
-.venv
-*.png
