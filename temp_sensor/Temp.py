@@ -31,7 +31,6 @@ class TempSensor:
     def tracking_loop(self):
         while True:
             self.get_temp()
-            print(self.cur_temp)
             time.sleep(1)
 
     def start_temp_tracking(self):
