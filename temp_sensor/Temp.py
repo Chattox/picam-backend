@@ -2,7 +2,7 @@ import time
 from datetime import datetime, timedelta
 import threading
 from w1thermsensor import W1ThermSensor
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
 
 class TempSensor:
     def __init__(self):
@@ -69,3 +69,6 @@ class TempSensor:
     def start_temp_storing(self):
         storage_thread = threading.Thread(target=self.storage_loop)
         storage_thread.start()
+
+    def get_all_temp_history(self):
+        return self.db.all()
