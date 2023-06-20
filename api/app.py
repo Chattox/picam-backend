@@ -15,6 +15,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 camera = Picam()
 temp = TempSensor()
 temp.start_temp_tracking()
+temp.start_temp_storing()
 
 @app.route("/stream", methods=["GET"])
 @cross_origin()

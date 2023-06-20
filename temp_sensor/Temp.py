@@ -54,9 +54,18 @@ class TempSensor:
         while True:
             self.get_temp()
             self.check_temp()
-            self.store_temp()
             time.sleep(1)
+
+    def storage_loop(self):
+        while True:
+            self.get_temp()
+            self.store_temp()
+            time.sleep(60)
 
     def start_temp_tracking(self):
         tracking_thread = threading.Thread(target=self.tracking_loop)
         tracking_thread.start()
+
+    def start_temp_storing(self):
+        storage_thread = threading.Thread(target=self.storage_loop)
+        storage_thread.start()
