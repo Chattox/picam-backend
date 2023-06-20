@@ -95,6 +95,7 @@ soupsieve==2.2.1
 spidev==3.5
 ssh-import-id==5.10
 thonny==4.0.1
+tinydb==4.8.0
 toml==0.10.1
 touchphat==0.0.1
 twython==3.8.2
@@ -103,6 +104,7 @@ typing-extensions==3.7.4.3
 unicornhathd==0.0.4
 urllib3==1.26.5
 v4l2-python3==0.3.2
+w1thermsensor==2.0.0
 webencodings==0.5.1
 Werkzeug==2.2.3
 wrapt==1.12.1

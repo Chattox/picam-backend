@@ -2,6 +2,7 @@ import time
 from datetime import datetime, timedelta
 import threading
 from w1thermsensor import W1ThermSensor
+from tinydb import TinyDB, Query
 
 class TempSensor:
     def __init__(self):
@@ -12,10 +13,14 @@ class TempSensor:
         self.min_time = datetime.now().replace(microsecond=0)
         self.max_temp = 999
         self.max_time = datetime.now().replace(microsecond=0)
+        self.db = TinyDB('./db/db.json')
 
     def get_temp(self):
         self.cur_temp = self.sensor.get_temperature()
         self.cur_time = datetime.now().replace(microsecond=0)
+
+        self.db.insert({'temp': self.cur_temp, 'time': self.cur_time.isoformat()})
+
         if self.min_temp == 999:
             self.min_temp = self.cur_temp
         if self.max_temp == 999:
