@@ -19,8 +19,7 @@ class TempSensor:
         self.cur_temp = self.sensor.get_temperature()
         self.cur_time = datetime.now().replace(microsecond=0)
 
-        self.db.insert({'temp': self.cur_temp, 'time': self.cur_time.isoformat()})
-
+    def check_temp(self):
         if self.min_temp == 999:
             self.min_temp = self.cur_temp
         if self.max_temp == 999:
@@ -43,6 +42,8 @@ class TempSensor:
             self.min_temp = self.cur_temp
             self.min_time = self.cur_time
 
+    def store_temp(self):
+        self.db.insert({'temp': self.cur_temp, 'time': self.cur_time.isoformat()})
             
 
     def fetch_temp(self):
@@ -52,6 +53,8 @@ class TempSensor:
     def tracking_loop(self):
         while True:
             self.get_temp()
+            self.check_temp()
+            self.store_temp()
             time.sleep(1)
 
     def start_temp_tracking(self):
