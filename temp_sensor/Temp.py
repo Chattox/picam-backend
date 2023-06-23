@@ -2,6 +2,7 @@ import time
 from datetime import datetime, timedelta
 import threading
 from w1thermsensor import W1ThermSensor
+from tinydb import TinyDB
 
 class TempSensor:
     def __init__(self):
@@ -12,10 +13,13 @@ class TempSensor:
         self.min_time = datetime.now().replace(microsecond=0)
         self.max_temp = 999
         self.max_time = datetime.now().replace(microsecond=0)
+        self.db = TinyDB('./db/db.json')
 
     def get_temp(self):
         self.cur_temp = self.sensor.get_temperature()
         self.cur_time = datetime.now().replace(microsecond=0)
+
+    def check_temp(self):
         if self.min_temp == 999:
             self.min_temp = self.cur_temp
         if self.max_temp == 999:
@@ -38,6 +42,8 @@ class TempSensor:
             self.min_temp = self.cur_temp
             self.min_time = self.cur_time
 
+    def store_temp(self):
+        self.db.insert({'temp': self.cur_temp, 'time': self.cur_time.isoformat()})
             
 
     def fetch_temp(self):
@@ -47,8 +53,22 @@ class TempSensor:
     def tracking_loop(self):
         while True:
             self.get_temp()
+            self.check_temp()
             time.sleep(1)
+
+    def storage_loop(self):
+        while True:
+            self.get_temp()
+            self.store_temp()
+            time.sleep(300)
 
     def start_temp_tracking(self):
         tracking_thread = threading.Thread(target=self.tracking_loop)
         tracking_thread.start()
+
+    def start_temp_storing(self):
+        storage_thread = threading.Thread(target=self.storage_loop)
+        storage_thread.start()
+
+    def get_all_temp_history(self):
+        return self.db.all()
