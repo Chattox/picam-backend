@@ -38,3 +38,11 @@ def get_all_temp_history():
     if request.args.get("auth") == AUTH_PASSWORD:
         temp_history = temp.get_all_temp_history()
         return Response(json.dumps(temp_history), mimetype='application/json', status=200)
+    
+@app.route("/get24hourstemphistory", methods=["GET"])
+@cross_origin()
+def get_day_temp_history():
+    if request.args.get("auth") == AUTH_PASSWORD:
+        day_temp_history = temp.get_day_temp_history()
+        return Response(json.dumps(day_temp_history), mimetype='application/json', status=200)
+    
