@@ -75,12 +75,11 @@ class TempSensor:
         return self.db.all()
     
     def get_day_temp_history(self):
-        temp_query = Query()
         now = datetime.now().replace(microsecond=0)
         day_t_delta = timedelta(hours=24)
-        def within_timeframe(time, target_time, timeframe):
-            temp_delta = target_time - datetime.fromisoformat(time)
-            return temp_delta < timeframe
         
-        return self.db.search(self.TempQuery.time.test(within_timeframe, now, day_t_delta))
-        
+        return self.db.search(self.TempQuery.time.test(self.within_timeframe, now, day_t_delta))
+    
+    def within_timeframe(self, time, target_time, timeframe):
+        temp_delta = target_time - datetime.fromisoformat(time)
+        return temp_delta < timeframe
