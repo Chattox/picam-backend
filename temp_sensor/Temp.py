@@ -140,4 +140,4 @@ class TempSensor:
                     segment = []
                     segment.append(i['temp'])
                     
-        return reversed(result)
+        return result.reverse()
