@@ -119,7 +119,7 @@ class TempSensor:
         elif (timescale == "month"):
             t_delta = timedelta(hours=8)
         elif (timescale == "all"):
-            data_segments = np.array_split(data, floor(len(data)))
+            data_segments = np.array_split(data, 100)
             for i in data_segments:
                 for j in i:
                     segment.append(j['temp'])
