@@ -86,7 +86,7 @@ class TempSensor:
         week_t_delta = timedelta(days=7)
 
         temp_history = self.db.search(self.TempQuery.time.test(self.within_timeframe, now, week_t_delta))
-        return self.__get_temp_averages(self, now, "week", temp_history)
+        return self.__get_temp_averages(now, "week", temp_history)
     
     def get_month_temp_history(self):
         now = datetime.now().replace(microsecond=0)
@@ -104,11 +104,13 @@ class TempSensor:
             current = now
             result = []
             segment = []
-            for i in data:
-                if (self.within_timeframe(self, i.time, current, t_delta)):
-                    segment.append(i.time)
+            for i in reversed(data):
+                if (self.within_timeframe(i['time'], current, t_delta)):
+                    segment.append(i['temp'])
                 else:
                     result.append({'temp': statistics.mean(segment), 'time': current.isoformat() })
                     current = current - t_delta
                     segment = []
-                    segment.append(i.time)
+                    segment.append(i['temp'])
+                    
+            return result
