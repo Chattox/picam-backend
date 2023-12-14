@@ -67,7 +67,7 @@ def get_all_temp_history():
         all_temp_history = temp.get_all_temp_history()
         return Response(json.dumps(all_temp_history), mimetype='application/json', status=200)
 
-@app.rout('/getcollatedtemphistory', methods=["GET"])
+@app.route('/getcollatedtemphistory', methods=["GET"])
 @cross_origin()
 def get_collated_temp_history():
     if request.args.get('auth') == AUTH_PASSWORD:
