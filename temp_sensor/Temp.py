@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import threading
 from w1thermsensor import W1ThermSensor
 from tinydb import TinyDB, Query
+import statistics
 
 class TempSensor:
     def __init__(self):
@@ -84,7 +85,8 @@ class TempSensor:
         now = datetime.now().replace(microsecond=0)
         week_t_delta = timedelta(days=7)
 
-        return self.db.search(self.TempQuery.time.test(self.within_timeframe, now, week_t_delta))
+        temp_history = self.db.search(self.TempQuery.time.test(self.within_timeframe, now, week_t_delta))
+        return self.__get_temp_averages(self, now, "week", temp_history)
     
     def get_month_temp_history(self):
         now = datetime.now().replace(microsecond=0)
@@ -95,3 +97,18 @@ class TempSensor:
     def within_timeframe(self, time, target_time, timeframe):
         temp_delta = target_time - datetime.fromisoformat(time)
         return temp_delta < timeframe
+    
+    def __get_temp_averages(self, now, timescale, data):
+        if (timescale == "week"):
+            t_delta = timedelta(hours=2)
+            current = now
+            result = []
+            segment = []
+            for i in data:
+                if (self.within_timeframe(self, i.time, current, t_delta)):
+                    segment.append(i.time)
+                else:
+                    result.append({'temp': statistics.mean(segment), 'time': current.isoformat() })
+                    current = current - t_delta
+                    segment = []
+                    segment.append(i.time)
