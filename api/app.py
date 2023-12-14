@@ -50,6 +50,13 @@ def get_day_temp_history():
 @cross_origin()
 def get_week_temp_history():
     if request.args.get("auth") == AUTH_PASSWORD:
-        week_temp_history =- temp.get_week_temp_history()
+        week_temp_history = temp.get_week_temp_history()
         return Response(json.dumps(week_temp_history), mimetype="application/json", status=200)
+    
+@app.route('/getmonthtemphistory', methods=["GET"])
+@cross_origin()
+def get_month_temp_history():
+    if request.args.get('auth') == AUTH_PASSWORD:
+        month_temp_history = temp.get_month_temp_history()
+        return Response(json.dumps(month_temp_history), mimetype="application/json", status=200)
     

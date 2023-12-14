@@ -86,6 +86,12 @@ class TempSensor:
 
         return self.db.search(self.TempQuery.time.test(self.within_timeframe, now, week_t_delta))
     
+    def get_month_temp_history(self):
+        now = datetime.now().replace(microsecond=0)
+        month_t_delta = timedelta(days=30)
+
+        return self.db.search(self.TempQuery.time.test(self.within_timeframe, now, month_t_delta))
+    
     def within_timeframe(self, time, target_time, timeframe):
         temp_delta = target_time - datetime.fromisoformat(time)
         return temp_delta < timeframe
