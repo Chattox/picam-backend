@@ -104,6 +104,9 @@ class TempSensor:
         temp_history = self.db.all()
         return self.__get_temp_averages(now, "all", temp_history)
     
+    def get_collated_temp_history(self):
+        return {'day': self.get_day_temp_history(), 'week': self.get_week_temp_history(), 'month': self.get_month_temp_history(), 'all': self.get_all_temp_history()}
+    
     def within_timeframe(self, time, target_time, timeframe):
         temp_delta = target_time - datetime.fromisoformat(time)
         return temp_delta < timeframe
@@ -137,4 +140,5 @@ class TempSensor:
                     segment = []
                     segment.append(i['temp'])
                     
-        return reversed(result)
+        result.reverse()            
+        return result
