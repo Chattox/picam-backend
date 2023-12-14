@@ -32,17 +32,37 @@ def get_temp():
         temperature = temp.fetch_temp()
         return Response(json.dumps(temperature), mimetype='application/json', status=200)
     
-@app.route("/getalltemphistory", methods=["GET"])
+@app.route("/getfulltemphistory", methods=["GET"])
 @cross_origin()
-def get_all_temp_history():
+def get_full_temp_history():
     if request.args.get("auth") == AUTH_PASSWORD:
-        temp_history = temp.get_all_temp_history()
+        temp_history = temp.get_full_temp_history()
         return Response(json.dumps(temp_history), mimetype='application/json', status=200)
     
-@app.route("/get24hourstemphistory", methods=["GET"])
+@app.route("/getdaytemphistory", methods=["GET"])
 @cross_origin()
 def get_day_temp_history():
     if request.args.get("auth") == AUTH_PASSWORD:
         day_temp_history = temp.get_day_temp_history()
         return Response(json.dumps(day_temp_history), mimetype='application/json', status=200)
     
+@app.route('/getweektemphistory', methods=["GET"])
+@cross_origin()
+def get_week_temp_history():
+    if request.args.get("auth") == AUTH_PASSWORD:
+        week_temp_history = temp.get_week_temp_history()
+        return Response(json.dumps(week_temp_history), mimetype="application/json", status=200)
+    
+@app.route('/getmonthtemphistory', methods=["GET"])
+@cross_origin()
+def get_month_temp_history():
+    if request.args.get('auth') == AUTH_PASSWORD:
+        month_temp_history = temp.get_month_temp_history()
+        return Response(json.dumps(month_temp_history), mimetype="application/json", status=200)
+    
+@app.route('/getalltemphistory', methods=["GET"])
+@cross_origin()
+def get_all_temp_history():
+    if request.args.get('auth') == AUTH_PASSWORD:
+        all_temp_history = temp.get_all_temp_history()
+        return Response(json.dumps(all_temp_history), mimetype='application/json', status=200)

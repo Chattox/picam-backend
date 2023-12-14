@@ -3,6 +3,9 @@ from datetime import datetime, timedelta
 import threading
 from w1thermsensor import W1ThermSensor
 from tinydb import TinyDB, Query
+import statistics
+import numpy as np
+from math import floor
 
 class TempSensor:
     def __init__(self):
@@ -15,6 +18,8 @@ class TempSensor:
         self.max_time = datetime.now().replace(microsecond=0)
         self.db = TinyDB('./db/db.json')
         self.TempQuery = Query()
+        self.tracking_loop_interval_seconds = 5
+        self.storage_loop_interval_seconds = 900
 
     def get_temp(self):
         self.cur_temp = self.sensor.get_temperature()
@@ -55,13 +60,13 @@ class TempSensor:
         while True:
             self.get_temp()
             self.check_temp()
-            time.sleep(5)
+            time.sleep(self.tracking_loop_interval_seconds)
 
     def storage_loop(self):
         while True:
             self.get_temp()
             self.store_temp()
-            time.sleep(900)
+            time.sleep(self.storage_loop_interval_seconds)
 
     def start_temp_tracking(self):
         tracking_thread = threading.Thread(target=self.tracking_loop)
@@ -71,16 +76,65 @@ class TempSensor:
         storage_thread = threading.Thread(target=self.storage_loop)
         storage_thread.start()
 
-    def get_all_temp_history(self):
+    def get_full_temp_history(self):
         return self.db.all()
     
     def get_day_temp_history(self):
-        temp_query = Query()
         now = datetime.now().replace(microsecond=0)
         day_t_delta = timedelta(hours=24)
-        def within_timeframe(time, target_time, timeframe):
-            temp_delta = target_time - datetime.fromisoformat(time)
-            return temp_delta < timeframe
         
-        return self.db.search(self.TempQuery.time.test(within_timeframe, now, day_t_delta))
-        
+        return self.db.search(self.TempQuery.time.test(self.within_timeframe, now, day_t_delta))
+    
+    def get_week_temp_history(self):
+        now = datetime.now().replace(microsecond=0)
+        week_t_delta = timedelta(days=7)
+
+        temp_history = self.db.search(self.TempQuery.time.test(self.within_timeframe, now, week_t_delta))
+        return self.__get_temp_averages(now, "week", temp_history)
+    
+    def get_month_temp_history(self):
+        now = datetime.now().replace(microsecond=0)
+        month_t_delta = timedelta(days=30)
+
+        temp_history = self.db.search(self.TempQuery.time.test(self.within_timeframe, now, month_t_delta))
+        return self.__get_temp_averages(now, "month", temp_history)
+    
+    def get_all_temp_history(self):
+        now = datetime.now().replace(microsecond=0)
+        temp_history = self.db.all()
+        return self.__get_temp_averages(now, "all", temp_history)
+    
+    def within_timeframe(self, time, target_time, timeframe):
+        temp_delta = target_time - datetime.fromisoformat(time)
+        return temp_delta < timeframe
+    
+    def __get_temp_averages(self, now, timescale, data):
+        current = now
+        result = []
+        segment = []
+        t_delta = timedelta(hours=0)
+
+        if (timescale == "week"):
+            t_delta = timedelta(hours=2)
+        elif (timescale == "month"):
+            t_delta = timedelta(hours=8)
+        elif (timescale == "all"):
+            data_segments = np.array_split(data, 100)
+            for i in data_segments:
+                for j in i:
+                    segment.append(j['temp'])
+                result.append({'temp': statistics.mean(segment), 'time': i[0]['time']})
+                segment = []
+
+            return result
+ 
+        for i in reversed(data):
+                if (self.within_timeframe(i['time'], current, t_delta)):
+                    segment.append(i['temp'])
+                else:
+                    result.append({'temp': statistics.mean(segment), 'time': current.isoformat() })
+                    current = current - t_delta
+                    segment = []
+                    segment.append(i['temp'])
+                    
+        return reversed(result)
