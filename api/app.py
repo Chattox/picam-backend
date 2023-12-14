@@ -32,11 +32,11 @@ def get_temp():
         temperature = temp.fetch_temp()
         return Response(json.dumps(temperature), mimetype='application/json', status=200)
     
-@app.route("/getalltemphistory", methods=["GET"])
+@app.route("/getfulltemphistory", methods=["GET"])
 @cross_origin()
-def get_all_temp_history():
+def get_full_temp_history():
     if request.args.get("auth") == AUTH_PASSWORD:
-        temp_history = temp.get_all_temp_history()
+        temp_history = temp.get_full_temp_history()
         return Response(json.dumps(temp_history), mimetype='application/json', status=200)
     
 @app.route("/getdaytemphistory", methods=["GET"])
@@ -60,3 +60,9 @@ def get_month_temp_history():
         month_temp_history = temp.get_month_temp_history()
         return Response(json.dumps(month_temp_history), mimetype="application/json", status=200)
     
+@app.route('/getalltemphistory', methods=["GET"])
+@cross_origin()
+def get_all_temp_history():
+    if request.args.get('auth') == AUTH_PASSWORD:
+        all_temp_history = temp.get_all_temp_history()
+        return Response(json.dumps(all_temp_history), mimetype='application/json', status=200)
